@@ -19,9 +19,9 @@ export default {
   methods: {
   },
   mounted () {
-    window.eventBus.$on('warnning', (message) => {
-      console.log(message)
-      this.contents.push(message)
+    window.eventBus.$on('warnning', (event) => {
+      console.log(event)
+      this.contents.push(event)
     })
   }
 }
