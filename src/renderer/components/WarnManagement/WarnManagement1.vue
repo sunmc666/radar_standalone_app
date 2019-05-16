@@ -34,8 +34,14 @@ export default {
       Height: '',
       event: [],
       Data: [],
-      startPoint: [],
-      endPoint: [],
+      startPoint: [{
+        x: 0,
+        y: 0
+      }],
+      endPoint: [{
+        x: 0,
+        y: 0
+      }],
       Point1: [],
       Point2: [],
       Point3: [],
@@ -96,13 +102,19 @@ export default {
       }
     },
     mousemove (e) {
+      var cvs = document.getElementById('mystage')
+      var ctx = cvs.getContext('2d')
+      /* ctx.fillStyle = 'red'
+      for (var i = 0; i < this.startPoint.length; i++) {
+        ctx.fillRect(this.startPoint[i].x, this.startPoint[i].y, this.endPoint[i].x, this.endPoint[i].y)
+      } */
       if (this.isAllowDrawLine) {
-        var cvs = document.getElementById('mystage')
-        var ctx = cvs.getContext('2d')
         var location2 = this.$options.methods.getlocation(e.clientX, e.clientY)
+        ctx.clearRect(-cvs.width / 2, 0, cvs.width, cvs.height)
         ctx.fillStyle = 'red'
         ctx.fillRect(this.x, this.y, location2.x - this.x, location2.y - this.y)
         ctx.stroke()
+        this.drawImage()
       }
     },
     mouseup (e) {
@@ -111,6 +123,17 @@ export default {
       this.endPoint.push(location3)
       console.log(this.startPoint)
       console.log(this.endPoint)
+    },
+    drawImage () {
+      var cvs = document.getElementById('mystage')
+      var ctx = cvs.getContext('2d')
+      ctx.fillStyle = 'red'
+      // if (this.startPoint[0].x && this.startPoint.length) {
+      for (var i = 0; i < this.startPoint.length - 1; i++) {
+        ctx.fillRect(this.startPoint[i].x, this.startPoint[i].y, this.endPoint[i].x - this.startPoint[i].x, this.endPoint[i].y - this.startPoint[i].y)
+        ctx.stroke()
+      }
+      // }
     },
     edit () {
       this.isAllowEdit = true
@@ -122,13 +145,17 @@ export default {
       var cvs = document.getElementById('mystage')
       var ctx = cvs.getContext('2d')
       ctx.clearRect(-cvs.width / 2, 0, cvs.width, cvs.height)
+      this.startPoint = []
+      this.endPoint = []
     },
     warn () {
       var cvs = document.getElementById('mystage')
       var ctx = cvs.getContext('2d')
-      var imgData = ctx.getImageData(this.Dot.x + cvs.width / 2, cvs.height - this.Dot.y, 800, 400)
-      var red = imgData.data[0]
-      if (red === 255) {
+      var imgData = ctx.getImageData(this.Dot.x / 50 + cvs.width / 2, cvs.height - this.Dot.y / 50, 800, 400)
+      var R = imgData.data[0]
+      var G = imgData.data[1]
+      var B = imgData.data[2]
+      if (R === 255 && G === 0 && B === 0) {
         this.isWarn = true
       }
     },
@@ -291,7 +318,10 @@ export default {
         ipc.send('warnning')
         this.aplayAudio()
         var date = new Date()
-        this.event = [this.formatDate(date), [this.Dot.x / 50, this.Dot.y / 50], '有人进入禁止区域']
+        var time = this.formatDate(date)
+        var position = [this.Dot.x / 50, this.Dot.y / 50]
+        var message = '有人闯入禁止区域'
+        this.event = {time, position, message}
         console.log(this.event)
         window.eventBus.$emit('warnning', this.event)
       }

@@ -1,8 +1,8 @@
 <template>
   <div class="connection animated bounceInUp">
-    <h1>连接管理</h1>
-    <div>{{ status }}</div>
-    <h1>设备</h1>
+    <h3>连接管理</h3>
+    <h3>{{ status }}</h3>
+    <h3>设备</h3>
       <el-table :data="devices">
         <el-table-column
           label="名称"
