@@ -122,6 +122,32 @@ export default {
     },
     sendEmail () {
       var self = this
+      var email = require('emailjs')
+      var server = email.server.connect({
+        user: 'sunmc7777777@163.com',
+        password: 'sunmengchen1995',
+        host: 'smtp.163.com',
+        ssl: true
+      })
+      server.send({
+        text: this.details,
+        from: 'sunmc7777777@163.com',
+        to: '1183276929@qq.com',
+        subject: this.value
+      }, function (err, response) {
+        console.log(err || response)
+        if (err) {
+          self.$message.error('发送失败！' + err)
+        } else if (response) {
+          self.$message({
+            message: '邮件发送成功！',
+            type: 'success'
+          })
+        }
+      })
+    }
+    /* sendEmail () {
+      var self = this
       self.emailjs.init('user_r9Jpncka45g6pvtbz76yg')
       if (self.value !== '' && self.details !== '') {
         self.emailjs
@@ -147,7 +173,7 @@ export default {
       } else {
         alert('请输入内容！！')
       }
-    }
+    } */
   },
   created () {
     // this.emailjs = require('emailjs-com')
