@@ -1,5 +1,5 @@
 <template>
-  <div  class="animated slideInLeft">
+  <div  class="animated slideInLeft" @mouseup="mouseup2">
     <audio id="audio" src="/static/audio/130808.wav"/>
     <div class="container">
   	  <canvas class="stage" id="mystage" width="400" height="600" @mousedown="mousedown($event)" @mouseup="mouseup($event)"
@@ -61,7 +61,8 @@ export default {
       f: true,
       g: true,
       h: true,
-      j: true
+      j: true,
+      location4: {}
     }
   },
   methods: {
@@ -89,11 +90,11 @@ export default {
       }
     },
     mousedown (a) {
-      if (this.isAllowEdit) {
-        var cvs = document.getElementById('mystage')
-        var ctx = cvs.getContext('2d')
+      var cvs = document.getElementById('mystage')
+      var ctx = cvs.getContext('2d')
+      var location1 = this.$options.methods.getlocation(a.clientX, a.clientY)
+      if (a.button === 0 && this.isAllowEdit && location1.x <= 200 && location1.y <= 600 && location1.x >= -200 && location1.y >= 0) {
         this.isAllowDrawLine = true
-        var location1 = this.$options.methods.getlocation(a.clientX, a.clientY)
         this.startPoint.push(location1)
         ctx.moveTo(location1.x, location1.y)
         this.x = location1.x
@@ -104,12 +105,13 @@ export default {
     mousemove (e) {
       var cvs = document.getElementById('mystage')
       var ctx = cvs.getContext('2d')
+      var location2 = this.$options.methods.getlocation(e.clientX, e.clientY)
+      this.location4 = location2
       /* ctx.fillStyle = 'red'
       for (var i = 0; i < this.startPoint.length; i++) {
         ctx.fillRect(this.startPoint[i].x, this.startPoint[i].y, this.endPoint[i].x, this.endPoint[i].y)
       } */
-      if (this.isAllowDrawLine) {
-        var location2 = this.$options.methods.getlocation(e.clientX, e.clientY)
+      if (this.isAllowDrawLine && location2.x <= 200 && location2.y <= 600 && location2.x >= -200 && location2.y >= 0) {
         ctx.clearRect(-cvs.width / 2, 0, cvs.width, cvs.height)
         ctx.fillStyle = 'red'
         ctx.fillRect(this.x, this.y, location2.x - this.x, location2.y - this.y)
@@ -118,11 +120,21 @@ export default {
       }
     },
     mouseup (e) {
-      this.isAllowDrawLine = false
       var location3 = this.$options.methods.getlocation(e.clientX, e.clientY)
-      this.endPoint.push(location3)
-      console.log(this.startPoint)
-      console.log(this.endPoint)
+      if (this.isAllowDrawLine && location3.x < 200 && location3.y < 600 && location3.x > -200 && location3.y > 0) {
+        this.isAllowDrawLine = false
+        this.endPoint.push(location3)
+        console.log(this.startPoint)
+        console.log(this.endPoint)
+      }
+    },
+    mouseup2 (e) {
+      var location5 = this.$options.methods.getlocation(e.clientX, e.clientY)
+      console.log(location5.y)
+      if (this.isAllowDrawLine && (location5.x >= 200 || location5.y >= 600 || location5.x <= -200 || location5.y <= 0)) {
+        this.isAllowDrawLine = false
+        this.endPoint.push(this.location4)
+      }
     },
     drawImage () {
       var cvs = document.getElementById('mystage')
@@ -332,14 +344,15 @@ export default {
 
 <style>
 .container {
-  margin-top: 60px;
+  padding-top: 60px;
   text-align: center;
+  padding-bottom: 10px;
 }
 #mystage {
   border:1px solid black;
 }
 .management {
-  margin-top: 10px;
+  padding-left: 80%;
   text-align: center;
   float: right;
 }
