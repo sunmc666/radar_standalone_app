@@ -18,7 +18,7 @@
     <el-table
     :data="List"
     style="width: 100%"
-    :default-sort = "{prop: 'index', order: 'descending'}"
+    :default-sort = "{prop: 'index', order: 'ascending'}"
     >
     <el-table-column
       prop="index"
@@ -60,11 +60,11 @@ export default {
   mounted () {
     window.eventBus.$on('dot', (arg) => {
       console.log(arg)
-      var msg = {index: '0', x: '', y: ''}
+      var msg = {index: 0, x: '', y: ''}
       if (msg.x !== arg.x) {
         msg.x = arg.x
         msg.y = arg.y
-        msg.index = msg.index + 1
+        msg.index = this.List.length + 1
         this.List.push(msg)
       }
     })

@@ -163,8 +163,9 @@ export default {
     warn () {
       var cvs = document.getElementById('mystage')
       var ctx = cvs.getContext('2d')
-      var imgData = ctx.getImageData(this.Dot.x / 50 + cvs.width / 2, cvs.height - this.Dot.y / 50, 800, 400)
+      var imgData = ctx.getImageData(this.Dot.x * 50 + cvs.width / 2, cvs.height - this.Dot.y * 50, 800, 400)
       var R = imgData.data[0]
+      console.log(R)
       var G = imgData.data[1]
       var B = imgData.data[2]
       if (R === 255 && G === 0 && B === 0) {
@@ -281,7 +282,7 @@ export default {
       if (this.Dot.targetID % 10 === 9.0) {
         ctx.lineTo(this.Dot.x * 50, this.Dot.y * 50)
       }
-      if (this.Point10[0] && this.h) {
+      if (this.Point10[0] && this.j) {
         this.j = false
         ctx.moveTo(this.Point10[0].x * 50, this.Point10[0].y * 50)
       }
@@ -331,7 +332,7 @@ export default {
         this.aplayAudio()
         var date = new Date()
         var time = this.formatDate(date)
-        var position = [this.Dot.x / 50, this.Dot.y / 50]
+        var position = [this.Dot.x, this.Dot.y]
         var message = '有人闯入禁止区域'
         this.event = {time, position, message}
         console.log(this.event)
